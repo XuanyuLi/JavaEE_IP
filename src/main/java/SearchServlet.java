@@ -17,6 +17,10 @@ public class SearchServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String ip = req.getParameter("IP");
+        if (ip.length() == 0) {
+            req.setAttribute("message","IP地址不能为空");
+            req.getRequestDispatcher("index.jsp").forward(req,resp);
+        }
         String URL = "jdbc:mysql:///?user=root&password=system";
         String sql = "SELECT * FROM db_ip.ip WHERE inet_aton(?) BETWEEN inet_aton(start) AND inet_aton(end)";
         try {
@@ -30,6 +34,7 @@ public class SearchServlet extends HttpServlet {
                 req.getRequestDispatcher("index.jsp").forward(req,resp);
             } else {
                 req.setAttribute("message","IP地址有误，请重新输入!");
+                req.getRequestDispatcher("index.jsp").forward(req,resp);
             }
             connection.close();
             preparedStatement.close();
